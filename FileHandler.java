@@ -9,7 +9,11 @@ public class FileHandler{
 	private char[] source;
 
 	private FileHandler(){
-		source();
+		try {
+			source();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	public static FileHandler getInstance(){
 		if(instance == null)
@@ -20,23 +24,34 @@ public class FileHandler{
 	/*
      * @return String
      */
-	private void source(){
+	private void source() throws IOException {
 		String filePath = Paths.get("").toAbsolutePath().toString();
-		filePath += "files\\";
+		filePath += "\\files\\";
 		String fileName = "source.txt";
 	
 		File file = new File(filePath + fileName);
-
-		try (FileReader fReader = new FileReader(file)) {
+		FileReader fReader = null;
+		try {
+			fReader = new FileReader(file);
 			source = new char[(int) file.length()];
 			fReader.read(source);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			fReader.close();
 		}
 	}
 
 	public char getSource(int address){
 		return source[address];
+	}
+
+	public byte getIF(){
+		return (byte) 0;
+	}
+
+	public void printOF(){
+
 	}
 }
