@@ -45,17 +45,17 @@ public class Interpreter {
 				throw new IndexOutOfBoundsException("There is no argument to end the program. (Missing '$')");
 			}
 			switch (command) {
-			case '>': dataCounter++;
+			case '>': dataCounter++; System.out.println("\'>\' dataCounter:\t" + dataCounter);
 				break;
-			case '<': dataCounter--;
+			case '<': dataCounter--; System.out.println("\'<\'dataCounter:\t" + dataCounter);
 				break;
-			case '+': memory[dataCounter]++;
+			case '+': memory[dataCounter]++; System.out.println("\'+\' memory[dataCounter]:\t" + memory[dataCounter]);
 				break;
-			case '-': memory[dataCounter]--;
+			case '-': memory[dataCounter]--; System.out.println("\'-\' memory[dataCounter]:\t" + memory[dataCounter]);
 				break;
-			case '[': if(memory[dataCounter] == 0) programCounter = goTo();
+			case '[': if(memory[dataCounter] == (byte) 0) programCounter = goTo(); if(memory[dataCounter] == 0) System.out.println("\'[\' " + goTo() + " goTo " + programCounter); else System.out.println("\'[\' memory[dataCounter] != 0");
 				break;
-			case ']': if(memory[dataCounter] == 0) programCounter = goTo();
+			case ']': if(memory[dataCounter] == (byte) 0) programCounter = goTo(); if(memory[dataCounter] == 0) System.out.println("\']\' " + goTo() + " goTo " + programCounter); else System.out.println("\'[\' memory[dataCounter] != 0");
 				break;
 			case ',': memory[dataCounter] = file.getIF();
 				break;
@@ -67,7 +67,7 @@ public class Interpreter {
 			
 			default:
 				throw new IllegalArgumentException(
-					"The argument does not belong to this alphabet"
+					"The argument \'ANSII " + ((int)command) + "\' does not belong to this alphabet"
 				);
 			}
 			programCounter++;

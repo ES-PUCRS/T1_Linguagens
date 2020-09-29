@@ -1,4 +1,5 @@
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.io.PrintWriter;
 import java.io.IOException;
 // import java.nio.file.Files;
@@ -25,6 +26,7 @@ public class FileHandler{
 		try {
 			readSource();
 			readIf();
+			printOF("System output: ", false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,8 +83,18 @@ public class FileHandler{
 		FileReader fReader = null;
 		try {
 			fReader = new FileReader(file);
-			source = new char[(int) file.length()];
-			fReader.read(source);
+			char[] arr = new char[(int) file.length()];
+			fReader.read(arr);
+			char[] sublist = new char[arr.length];
+			int j = 0;
+			for(int i = 0; i < arr.length; i++){
+				if(arr[i] != 10 && arr[i] != 13){
+					sublist[i-j] = arr[i];
+				}else{
+					j++;
+				}
+			}
+			source = Arrays.copyOfRange(sublist, 0, arr.length-j);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -114,10 +126,13 @@ public class FileHandler{
 	 * @param content Conteudo (byte) a ser impresso no arquivo de saída
 	 * @throws IOException Realiza a tentativa de impressao no final do arquivo
 	 */
-	public void printOF(byte content){
+	public void printOF(char content){ printOF(Integer.toString((int)content)); }
+	public void printOF(int content){ printOF(Integer.toString(content)); }
+	public void printOF(String content){ printOF(content, true); }
+	private void printOF(String content, boolean append){printOF(content,"of.txt",append); printOF(content,"ofChar.txt", append);}
+	private void printOF(String content, String fileName, boolean append){
 		String filePath = Paths.get("").toAbsolutePath().toString();
 		filePath += "\\files\\";
-		String fileName = "of.txt";
 		
 		try{
 			File ofFile = new File(filePath + fileName);
@@ -126,21 +141,28 @@ public class FileHandler{
 				ofFile.createNewFile();
 			}
 		
-			logDataWriter = new PrintWriter(new FileWriter(ofFile, true));
+			logDataWriter = new PrintWriter(new FileWriter(ofFile, append));
 		
 		}catch(IOException x){
 			 System.err.format("Erro de E/S: %s%n", x);
 		}
 
 		logDataWriter.append("\n");
-		logDataWriter.append(content);
+		if(fileName.equals("ofChar.txt") && append == true){
+			if(Integer.parseInt(content) > 31 && Integer.parseInt(content) < 127)
+				logDataWriter.append((char)Integer.parseInt(content));
+			else
+				logDataWriter.append("b"+content);
+		}else
+			logDataWriter.append(content);
+
         logDataWriter.close();
 	}
 
-	public void printOF(byte[] content){
+	public void printOF(byte[] content){ printOF(content, "of.txt", true); printOF(content,"ofChar.txt",true); }
+	private void printOF(byte[] content, String fileName, boolean isOf){
 		String filePath = Paths.get("").toAbsolutePath().toString();
 		filePath += "\\files\\";
-		String fileName = "of.txt";
 		
 		try{
 			File ofFile = new File(filePath + fileName);
@@ -148,21 +170,34 @@ public class FileHandler{
 			if(!ofFile.exists()){
 				ofFile.createNewFile();
 			}
-		
-			logDataWriter = new PrintWriter(new FileWriter(ofFile, true));
+			
+			logDataWriter = new PrintWriter(new FileWriter(ofFile, isOf));
 		
 		}catch(IOException x){
 			 System.err.format("Erro de E/S: %s%n", x);
 		}
 
 		logDataWriter.append("\n\n");
-		logDataWriter.append(content[0]);
+		if(fileName.equals("ofChar.txt"))
+			if(content[0] > 31 && content[0] < 127)
+				logDataWriter.append((char)content[0]);
+			else
+				logDataWriter.append("b"+String.valueOf((int)content[0]));
+		else
+			logDataWriter.append(String.valueOf((int)content[0]));
 		int i = 1;
 		do{
 			logDataWriter.append(" ");
-			logDataWriter.append(content[i]);
+			if(fileName.equals("ofChar.txt"))
+				if(content[i] > 31 && content[i] < 127)
+					logDataWriter.append((char)content[i]);
+				else
+					logDataWriter.append("b" + String.valueOf((int)content[i]));
+			else
+				logDataWriter.append(String.valueOf((int)content[i]));
+
 			i++;
-		}while(i < content.length)
+		}while(i < content.length);
         logDataWriter.close();
 	}
 }
