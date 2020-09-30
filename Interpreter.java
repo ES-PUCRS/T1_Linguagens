@@ -38,6 +38,7 @@ public class Interpreter {
 	 */
     public void run() throws CompletionException{
 		char command = '$';
+		boolean debug = false;
 		do{
 			try{
 				command = file.getSource(programCounter);
@@ -45,17 +46,17 @@ public class Interpreter {
 				throw new IndexOutOfBoundsException("There is no argument to end the program. (Missing '$')");
 			}
 			switch (command) {
-			case '>': dataCounter++; System.out.println("\'>\' dataCounter:\t" + dataCounter);
+			case '>': dataCounter++; if(debug){ System.out.println("\'>\' dataCounter:\t" + dataCounter); }
 				break;
-			case '<': dataCounter--; System.out.println("\'<\'dataCounter:\t" + dataCounter);
+			case '<': dataCounter--; if(debug){ System.out.println("\'<\'dataCounter:\t" + dataCounter); }
 				break;
-			case '+': memory[dataCounter]++; System.out.println("\'+\' memory[dataCounter]:\t" + memory[dataCounter]);
+			case '+': memory[dataCounter]++; if(debug){ System.out.println("\'+\' memory[dataCounter]:\t" + memory[dataCounter]); }
 				break;
-			case '-': memory[dataCounter]--; System.out.println("\'-\' memory[dataCounter]:\t" + memory[dataCounter]);
+			case '-': memory[dataCounter]--; if(debug){ System.out.println("\'-\' memory[dataCounter]:\t" + memory[dataCounter]); }
 				break;
-			case '[': if(memory[dataCounter] == (byte) 0) programCounter = goTo(); if(memory[dataCounter] == 0) System.out.println("\'[\' " + goTo() + " goTo " + programCounter); else System.out.println("\'[\' memory[dataCounter] != 0");
+			case '[': if(memory[dataCounter] == (byte) 0) programCounter = goTo(); if(debug){ if(memory[dataCounter] == 0) System.out.println("\'[\' " + goTo() + " goTo " + programCounter); else System.out.println("\'[\' memory[dataCounter] != 0"); }
 				break;
-			case ']': if(memory[dataCounter] == (byte) 0) programCounter = goTo(); if(memory[dataCounter] == 0) System.out.println("\']\' " + goTo() + " goTo " + programCounter); else System.out.println("\'[\' memory[dataCounter] != 0");
+			case ']': if(memory[dataCounter] != (byte) 0) programCounter = goTo(); if(debug){ if(memory[dataCounter] == 0) System.out.println("\']\' " + goTo() + " goTo " + programCounter); else System.out.println("\'[\' memory[dataCounter] != 0"); }
 				break;
 			case ',': memory[dataCounter] = file.getIF();
 				break;
