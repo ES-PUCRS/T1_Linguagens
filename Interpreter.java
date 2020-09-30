@@ -17,7 +17,7 @@ public class Interpreter {
      */
     private Interpreter(){
 	this.file = FileHandler.getInstance();
-	this.memory = new byte[999];
+	this.memory = new byte[1000];
 	Arrays.fill(this.memory, (byte) 0);
 	programCounter = 0;
 	dataCounter = 0;
