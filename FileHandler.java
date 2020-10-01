@@ -1,11 +1,9 @@
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.io.PrintWriter;
 import java.io.IOException;
-// import java.nio.file.Files;
-// import java.nio.file.Path;
 import java.io.FileWriter;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.io.File;
 
 public class FileHandler{
@@ -17,33 +15,56 @@ public class FileHandler{
 	private char[] source;
 
 	/**
-	 * Classe contrutora FileHandler
-	 * Le os arquiivos Source e IF, caso nada tenha lido do arquivo IF
-	 * 					Falta só o print do of. ta
+	 * FileHandler building class
+	 * Read the Source and IF files, if nothing has been read from the IF file
 	 */
 	private FileHandler(){
 		ifCounter = -1;
 		try {
+			createFolder();
 			readSource();
 			readIf();
-			printOF("System output: ", false);
+			printOF("System output:\n", false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+	private void createFolder(){
+		String filePath = Paths.get("").toAbsolutePath().toString();
+		filePath += "\\files";
+		File file = new File(filePath);
+		File ifFile = new File(filePath+"\\if.txt");
+		File sourceFile = new File(filePath+"\\source.txt");
+		if(!file.exists() || !file.isDirectory())
+			file.mkdir();
+
+		try{
+			if(!ifFile.exists())
+				ifFile.createNewFile();
+			if(!sourceFile.exists()){
+				sourceFile.createNewFile();
+				logDataWriter = new PrintWriter(new FileWriter(sourceFile, false));
+				logDataWriter.println("$");
+				logDataWriter.close();
+			}
+		}catch(Exception e) { e.printStackTrace(); }
+	}
+
 	/**
-	 * Auxiliador da classe construtora.
-	 * Defini uma nova instancia de arquivo caso nenhuma tenha sido alocada e retorna a instancia atual.
-	 * @return Retorna a instância do arquivo
+	 * Construction class assistant.
+	 * Define a new file instance if none has been allocated and return the current instance.
+	 * @return Returns the file instance
 	 */
 	public static FileHandler getInstance(){
 		if(instance == null)
 			instance = new FileHandler();
 		return instance;
 	}
+	
 	/**
-	 * Realiza a leitura do arquivo IF e armazena conteudo em um vetor de byte
-	 * @throws IOException Tentativa de leitura do arquivo
+	 * Reads the if file and stores content in a byte vector
+	 * @throws IOException Attempted to read the file
 	 */
 	private void readIf() throws IOException {
 		String filePath = Paths.get("").toAbsolutePath().toString();
@@ -71,8 +92,8 @@ public class FileHandler{
 	}
 
 	/**
-	 * Realiza a leitura do arquivo Source e armazena conteudo em um vetor de char
-	 * @throws IOException Tentativa de leitura do arquivo
+	 * Reads the Source file and stores content in a char vector
+	 * @throws IOException Attempted to read the file
 	 */
 	private void readSource() throws IOException {
 		String filePath = Paths.get("").toAbsolutePath().toString();
@@ -102,19 +123,27 @@ public class FileHandler{
 			fReader.close();
 		}
 	}
+
 	/**
-	 * Recebe o numero (int) referente a qual linha esta o comando desejado e retorna o conteudo (char) da linha solicitada
-	 * @param address referencia ao comando (linha) do arquivo 
-	 * @return conteudo do comando solicitado
+	 * Receive the number (int) for which line the desired command is and return the content (char) of the requested line
+	 * @param address reference to the command (line) of the file
+	 * @return command content requested
 	 */
-	public char getSource(int address){
+	public char getSource(int address) throws ArrayIndexOutOfBoundsException{
 		return source[address];
 	}
 
 	/**
-	 * IF => Arquivo de input
-	 * Retorna o proximo conteudo do arquivo de memoria (bytes)
-	 * @return retorna o byte do conteudo da memoria solicitado
+	 * @return int source file length
+	 */
+	public int getSourceSize(){
+		return source.length;
+	}
+
+	/**
+	 * IF => Input file
+	 * Returns the next contents of the memory file (bytes)
+	 * @return returns the byte of the requested memory content
 	 */
 	public byte getIF(){
 		ifCounter++;
@@ -122,9 +151,9 @@ public class FileHandler{
 	}
 
 	/**
-	 * Recebe o conteudo que deve ser impresso ao final do arquivo de saida
-	 * @param content Conteudo (byte) a ser impresso no arquivo de saída
-	 * @throws IOException Realiza a tentativa de impressao no final do arquivo
+	 * Receives the content that must be printed at the end of the output file
+	 * @param content Content (byte) to be printed on the output file
+	 * @throws IOException Performs the printing attempt at the end of the file
 	 */
 	public void printOF(char content){ printOF(Integer.toString((int)content)); }
 	public void printOF(int content){ printOF(Integer.toString(content)); }
@@ -147,7 +176,7 @@ public class FileHandler{
 			 System.err.format("Erro de E/S: %s%n", x);
 		}
 
-		logDataWriter.append("\n");
+		// logDataWriter.append("\n");
 		if(fileName.equals("ofChar.txt") && append == true){
 			if(Integer.parseInt(content) > 31 && Integer.parseInt(content) < 127)
 				logDataWriter.append((char)Integer.parseInt(content));
@@ -159,6 +188,11 @@ public class FileHandler{
         logDataWriter.close();
 	}
 
+	/**
+	 * Receives the content that must be printed at the end of the output file
+	 * @param content Content (byte []) to be printed in the output file
+	 * @throws IOException Performs the printing attempt at the end of the file
+	 */
 	public void printOF(byte[] content){ printOF(content, "of.txt", true); printOF(content,"ofChar.txt",true); }
 	private void printOF(byte[] content, String fileName, boolean isOf){
 		String filePath = Paths.get("").toAbsolutePath().toString();
